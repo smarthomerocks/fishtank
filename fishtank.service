@@ -1,0 +1,13 @@
+[Unit]
+Description=Fishtank movie player
+After=syslog.target network.target 
+
+[Service]
+WorkingDirectory=/media/FISHDISK
+ExecStart=python3 /media/FISHDISK/fishtank.py
+Restart=on-failure
+RestartSec=5
+TimeoutSec=30
+
+[Install]
+WantedBy=multi-user.target

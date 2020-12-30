@@ -12,3 +12,11 @@ Button is connected between GND-pin and GPIO #14-pin (see script if you want to 
 "PARTUUID=<id of USB-drive>  /media/FISHDISK vfat    defaults,noatime,ro  0       0"
 7. "chmod 755 fishtank.py"
 8. Run script "./fishtank.py"
+
+You can also run the fishtank.py-script as a SystemD-service to get the script automatically started at boot-time and restarted in case of a crash.
+Instead of running the script as in #8, copy the fishtank.service to the SystemD-folder and start the service:
+
+8. cp fishtank.service /etc/systemd/system
+9. systemctl enable fishtank.service
+10. systemctl start fishtank.service
+
