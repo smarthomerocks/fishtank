@@ -62,17 +62,26 @@ def play_clip(file):
 
 
 def button_callback(channel):
-    global currentPlayer
-    logger.info('Button pressed, changing fishtank clip.')
-    currentPlayer = play_clip(get_random_clip())
+
+    start_time = time.time()
+
+    while GPIO.input(channel) == 1: # Wait for the button release
+        pass
+
+    buttonTime = time.time() - start_time # How long was the button pressed?
+    # a long distinct press of 1 seconds is needed for us to take notice, this is to filter out static.
+    if buttonTime >= 1:
+        global currentPlayer
+        logger.info('Button pressed, changing fishtank clip.')
+        currentPlayer = play_clip(get_random_clip())
 
 
 logging.info('Starting fishtank daemon.')
 
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# add rising edge detection on a channel, ignoring further edges for 400ms for switch bounce handling
-GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_callback, bouncetime=400)
+GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+# add rising edge detection on a channel, ignoring further edges for 300ms for switch bounce handling
+GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_callback, bouncetime=300)
 
 currentPlayer = play_clip(get_random_clip())
 

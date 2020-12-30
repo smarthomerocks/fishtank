@@ -1,4 +1,4 @@
-Raspberry Pi with HDMI-connected TV used to run a looping [Aquarium movie](https://www.uscenes.com/download/aquarium-video/), a optional button could be used to randomize movie to play.
+Raspberry Pi with HDMI-connected TV used to run a looping [Aquarium movie](https://www.uscenes.com/download/aquarium-video/), a optional button could be used to change movie to play.
 The mp4-movies and the fishtank.py-script could be mounted on a USB-disk for easy upgrade of clips, and preventing SD-card wear.
 
 Button is connected between GND-pin and GPIO #14-pin (see script if you want to change)
