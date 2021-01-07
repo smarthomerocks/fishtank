@@ -3,7 +3,6 @@
 import os
 import sys
 import time
-import random
 import signal
 import logging
 import subprocess
@@ -31,10 +30,25 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
+already_played_clips = set()
 
-def get_random_clip():
-    return random.choice([f for f in os.listdir(clipPath) if f.endswith('.mp4')])
+def get_available_clips():
+    return sorted([f for f in os.listdir(clipPath) if f.endswith('.mp4')])
 
+def get_next_clip():
+    global already_played_clips
+    available_clips = get_available_clips()
+    if len(available_clips) == 0:
+        return None
+
+    clips_not_played = sorted(list(set(available_clips) - already_played_clips))
+
+    if len(clips_not_played) > 0:
+        already_played_clips.add(clips_not_played[0])
+        return clips_not_played[0]
+    else:
+        already_played_clips = {available_clips[0]}
+        return available_clips[0]
 
 def stop_clip():
     global currentPlayer
@@ -51,6 +65,10 @@ def stop_clip():
 
 
 def play_clip(file):
+
+    if file is None:
+        return None
+
     try:
         stop_clip()
         logger.info('Playing clip: %s', file)
@@ -73,7 +91,7 @@ def button_callback(channel):
     if buttonTime >= 1:
         global currentPlayer
         logger.info('Button pressed, changing fishtank clip.')
-        currentPlayer = play_clip(get_random_clip())
+        currentPlayer = play_clip(get_next_clip())
 
 
 logging.info('Starting fishtank daemon.')
@@ -83,7 +101,7 @@ GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # add rising edge detection on a channel, ignoring further edges for 300ms for switch bounce handling
 GPIO.add_event_detect(button_pin, GPIO.RISING, callback=button_callback, bouncetime=300)
 
-currentPlayer = play_clip(get_random_clip())
+currentPlayer = play_clip(get_next_clip())
 
 try:
     # loop until program exists
